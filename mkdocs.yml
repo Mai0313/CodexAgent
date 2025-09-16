@@ -1,9 +1,9 @@
-site_name: CodingAgent
-site_url: https://mai0313.github.io/CodingAgent/
+site_name: CodexAgent
+site_url: https://mai0313.github.io/CodexAgent/
 site_author: Wei Lee
 
-repo_name: Mai0313/CodingAgent
-repo_url: https://github.com/Mai0313/CodingAgent
+repo_name: Mai0313/CodexAgent
+repo_url: https://github.com/Mai0313/CodexAgent
 edit_uri: edit/main/docs/
 
 docs_dir: docs
@@ -164,7 +164,7 @@ plugins:
 extra:
   social:
   - icon: fontawesome/brands/github-alt
-    link: https://github.com/Mai0313/CodingAgent
+    link: https://github.com/Mai0313/CodexAgent
 
   alternate:
   - link: /

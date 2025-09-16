@@ -7,17 +7,17 @@
 [![uv](https://img.shields.io/badge/-uv_dependency_management-2C5F2D?logo=python&logoColor=white)](https://docs.astral.sh/uv/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Pydantic v2](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/pydantic/pydantic/main/docs/badge/v2.json)](https://docs.pydantic.dev/latest/contributing/#badges)
-[![tests](https://github.com/Mai0313/CodingAgent/actions/workflows/test.yml/badge.svg)](https://github.com/Mai0313/CodingAgent/actions/workflows/test.yml)
-[![code-quality](https://github.com/Mai0313/CodingAgent/actions/workflows/code-quality-check.yml/badge.svg)](https://github.com/Mai0313/CodingAgent/actions/workflows/code-quality-check.yml)
-[![license](https://img.shields.io/badge/License-MIT-green.svg?labelColor=gray)](https://github.com/Mai0313/CodingAgent/tree/main?tab=License-1-ov-file)
-[![PRs](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Mai0313/CodingAgent/pulls)
-[![contributors](https://img.shields.io/github/contributors/Mai0313/CodingAgent.svg)](https://github.com/Mai0313/CodingAgent/graphs/contributors)
+[![tests](https://github.com/Mai0313/CodexAgent/actions/workflows/test.yml/badge.svg)](https://github.com/Mai0313/CodexAgent/actions/workflows/test.yml)
+[![code-quality](https://github.com/Mai0313/CodexAgent/actions/workflows/code-quality-check.yml/badge.svg)](https://github.com/Mai0313/CodexAgent/actions/workflows/code-quality-check.yml)
+[![license](https://img.shields.io/badge/License-MIT-green.svg?labelColor=gray)](https://github.com/Mai0313/CodexAgent/tree/main?tab=License-1-ov-file)
+[![PRs](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Mai0313/CodexAgent/pulls)
+[![contributors](https://img.shields.io/github/contributors/Mai0313/CodexAgent.svg)](https://github.com/Mai0313/CodexAgent/graphs/contributors)
 
 </center>
 
 🚀 帮助 Python 开发者「快速建立新项目」的模板。内置现代化包管理、工具链、Docker 与完整 CI/CD 工作流程。
 
-点击 [使用此模板](https://github.com/Mai0313/CodingAgent/generate) 后即可开始。
+点击 [使用此模板](https://github.com/Mai0313/CodexAgent/generate) 后即可开始。
 
 其他语言: [English](README.md) | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
 
