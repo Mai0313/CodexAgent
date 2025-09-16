@@ -1,6 +1,6 @@
 import uvicorn
 
-from codex_agent.api.app import app
+from codex_agent.app.api import app
 
 
 def main() -> None:

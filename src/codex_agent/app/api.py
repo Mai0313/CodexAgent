@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from codex_agent.api.v1 import gitea, github
+from codex_agent.app.v1 import gitea, github
 
 app = FastAPI()
 app.include_router(gitea.router, prefix="/gitea", tags=["gitea"])
