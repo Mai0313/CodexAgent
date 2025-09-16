@@ -369,4 +369,4 @@ class GiteaWebhookPayload(BaseModel):
         filepath = Path(filename)
         filepath.parent.mkdir(parents=True, exist_ok=True)
         with open(filepath, "w") as f:
-            json.dump(self.model_dump(), f, indent=4)
+            json.dump(self.model_dump(exclude_unset=True, exclude_defaults=True), f, indent=4)
