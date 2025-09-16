@@ -1,11 +1,10 @@
-from pathlib import Path
-
 from fastapi import Request, APIRouter
 from rich.console import Console
 
 from codex_agent.types.gitea import GiteaWebhookPayload
 from codex_agent.types.headers import GiteaWebhookHeaders
 from codex_agent.utils.settings import Settings
+from codex_agent.utils.claude_code import ClaudeCodeHandler
 
 router = APIRouter()
 
@@ -25,6 +24,8 @@ async def handle_gitea_webhook(request: Request) -> dict[str, str]:
         return {"status": "ignored"}
     if payload.action == "created" and payload.comment and payload.comment.user:
         console.print(payload)
-        prompt = Path("./prompts/template.md").read_text()
-        prompt = prompt.format(task=payload.comment.body, clone_url=payload.repository.clone_url)
+        claude = ClaudeCodeHandler(
+            task=payload.comment.body, clone_url=payload.repository.clone_url
+        )
+        console.print(claude.task)
     return {"status": "received"}
