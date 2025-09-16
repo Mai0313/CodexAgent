@@ -76,7 +76,7 @@ uv run coding_agent
 find . -type f -name "*.py" -o -name "*.md" -o -name "*.toml" | xargs sed -i 's/coding_agent/your_package_name/g'
 
 # 專案顯示標題
-find . -type f -name "*.py" -o -name "*.md" -o -name "*.toml" | xargs sed -i 's/RepoTemplate/YourProjectTitle/g'
+find . -type f -name "*.py" -o -name "*.md" -o -name "*.toml" | xargs sed -i 's/CodingAgent/YourProjectTitle/g'
 ```
 
 1. 更新 `pyproject.toml` 中的作者/描述等中繼資料

@@ -76,7 +76,7 @@ Use as a template (recommended for new projects):
 find . -type f -name "*.py" -o -name "*.md" -o -name "*.toml" | xargs sed -i 's/coding_agent/your_package_name/g'
 
 # Replace display title
-find . -type f -name "*.py" -o -name "*.md" -o -name "*.toml" | xargs sed -i 's/RepoTemplate/YourProjectTitle/g'
+find . -type f -name "*.py" -o -name "*.md" -o -name "*.toml" | xargs sed -i 's/CodingAgent/YourProjectTitle/g'
 ```
 
 1. Update metadata in `pyproject.toml`
