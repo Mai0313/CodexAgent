@@ -67,7 +67,9 @@ authors = [
     { name = "Wei", email = "mai@mai0313.com" },
 ]
 dependencies = [
-    "pydantic",
+    "fastapi[standard]>=0.116.1",
+    "pydantic>=2.11.7",
+    "rich>=14.1.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.10"
@@ -161,7 +163,7 @@ exclude = [
 ]
 
 [tool.poe.tasks]
-api = "python ./src/coding_agent/cli.py"
+api = "fastapi run ./src/coding_agent/cli.py --port=8116"
 main = "python ./src/coding_agent/cli.py"
 
 # Documentation
