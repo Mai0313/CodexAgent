@@ -7,17 +7,17 @@
 [![uv](https://img.shields.io/badge/-uv_dependency_management-2C5F2D?logo=python&logoColor=white)](https://docs.astral.sh/uv/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Pydantic v2](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/pydantic/pydantic/main/docs/badge/v2.json)](https://docs.pydantic.dev/latest/contributing/#badges)
-[![tests](https://github.com/Mai0313/coding_agent/actions/workflows/test.yml/badge.svg)](https://github.com/Mai0313/coding_agent/actions/workflows/test.yml)
-[![code-quality](https://github.com/Mai0313/coding_agent/actions/workflows/code-quality-check.yml/badge.svg)](https://github.com/Mai0313/coding_agent/actions/workflows/code-quality-check.yml)
-[![license](https://img.shields.io/badge/License-MIT-green.svg?labelColor=gray)](https://github.com/Mai0313/coding_agent/tree/main?tab=License-1-ov-file)
-[![PRs](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Mai0313/coding_agent/pulls)
-[![contributors](https://img.shields.io/github/contributors/Mai0313/coding_agent.svg)](https://github.com/Mai0313/coding_agent/graphs/contributors)
+[![tests](https://github.com/Mai0313/CodingAgent/actions/workflows/test.yml/badge.svg)](https://github.com/Mai0313/CodingAgent/actions/workflows/test.yml)
+[![code-quality](https://github.com/Mai0313/CodingAgent/actions/workflows/code-quality-check.yml/badge.svg)](https://github.com/Mai0313/CodingAgent/actions/workflows/code-quality-check.yml)
+[![license](https://img.shields.io/badge/License-MIT-green.svg?labelColor=gray)](https://github.com/Mai0313/CodingAgent/tree/main?tab=License-1-ov-file)
+[![PRs](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Mai0313/CodingAgent/pulls)
+[![contributors](https://img.shields.io/github/contributors/Mai0313/CodingAgent.svg)](https://github.com/Mai0313/CodingAgent/graphs/contributors)
 
 </center>
 
 🚀 帮助 Python 开发者「快速建立新项目」的模板。内置现代化包管理、工具链、Docker 与完整 CI/CD 工作流程。
 
-点击 [使用此模板](https://github.com/Mai0313/coding_agent/generate) 后即可开始。
+点击 [使用此模板](https://github.com/Mai0313/CodingAgent/generate) 后即可开始。
 
 其他语言: [English](README.md) | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
 
@@ -63,23 +63,8 @@ make test
 执行示例 CLI：
 
 ```bash
-uv run coding_agent
+uv run coding-agent
 ```
-
-作为模板使用（推荐）：
-
-1. 点击「使用此模板」建立新仓库
-2. 全局替换名称：
-
-```bash
-# 包/模块名称
-find . -type f -name "*.py" -o -name "*.md" -o -name "*.toml" | xargs sed -i 's/coding_agent/your_package_name/g'
-
-# 项目显示标题
-find . -type f -name "*.py" -o -name "*.md" -o -name "*.toml" | xargs sed -i 's/CodingAgent/YourProjectTitle/g'
-```
-
-1. 更新 `pyproject.toml` 中的作者/描述等元数据
 
 ## 🧰 指令一览
 
@@ -176,15 +161,15 @@ CI 亦会在建立 `v*` 标签时自动打包并上传产物。若要自动发�
 - 本机（源码仓）：
 
 ```bash
-uv run coding_agent
+uv run coding-agent
 uv run cli
 ```
 
 - 发布到 PyPI 后，通过 `uvx`（临时安装后执行）：
 
 ```bash
-# 若 console script 名称为 "coding_agent"
-uvx coding_agent
+# 若 console script 名称为 "coding-agent"
+uvx coding-agent
 
 # 或指定包/版本与入口名称
 uvx --from your-package-name==0.1.0 your-entrypoint
@@ -197,7 +182,7 @@ uvx --from your-package-name==0.1.0 your-entrypoint
 ```bash
 uv run poe docs        # 生成 + 启动文档预览（需 dev 群组）
 uv run poe gen         # 生成 + 发布文档（gh-deploy）（需 dev 群组）
-uv run poe main        # 执行 CLI（等同 uv run coding_agent）
+uv run poe main        # 执行 CLI（等同 uv run coding-agent）
 
 # 或使用 uvx（临时环境，无需本地安装）
 uvx poe docs
@@ -267,10 +252,10 @@ uvx poe docs
 
 ## 🧩 示例 CLI
 
-`pyproject.toml` 内提供 `coding_agent` 与 `cli` 两个入口点。目前演示返回简单 `Response` 模型，可依需求替换。
+`pyproject.toml` 内提供 `coding-agent` 与 `cli` 两个入口点。目前演示返回简单 `Response` 模型，可依需求替换。
 
 ```bash
-uv run coding_agent
+uv run coding-agent
 ```
 
 ## 🤝 贡献

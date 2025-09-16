@@ -316,7 +316,7 @@ wheels = [
 ]
 
 [[package]]
-name = "coding-agent"
+name = "codingagent"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

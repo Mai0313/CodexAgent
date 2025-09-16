@@ -7,17 +7,17 @@
 [![uv](https://img.shields.io/badge/-uv_dependency_management-2C5F2D?logo=python&logoColor=white)](https://docs.astral.sh/uv/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Pydantic v2](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/pydantic/pydantic/main/docs/badge/v2.json)](https://docs.pydantic.dev/latest/contributing/#badges)
-[![tests](https://github.com/Mai0313/coding_agent/actions/workflows/test.yml/badge.svg)](https://github.com/Mai0313/coding_agent/actions/workflows/test.yml)
-[![code-quality](https://github.com/Mai0313/coding_agent/actions/workflows/code-quality-check.yml/badge.svg)](https://github.com/Mai0313/coding_agent/actions/workflows/code-quality-check.yml)
-[![license](https://img.shields.io/badge/License-MIT-green.svg?labelColor=gray)](https://github.com/Mai0313/coding_agent/tree/main?tab=License-1-ov-file)
-[![PRs](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Mai0313/coding_agent/pulls)
-[![contributors](https://img.shields.io/github/contributors/Mai0313/coding_agent.svg)](https://github.com/Mai0313/coding_agent/graphs/contributors)
+[![tests](https://github.com/Mai0313/CodingAgent/actions/workflows/test.yml/badge.svg)](https://github.com/Mai0313/CodingAgent/actions/workflows/test.yml)
+[![code-quality](https://github.com/Mai0313/CodingAgent/actions/workflows/code-quality-check.yml/badge.svg)](https://github.com/Mai0313/CodingAgent/actions/workflows/code-quality-check.yml)
+[![license](https://img.shields.io/badge/License-MIT-green.svg?labelColor=gray)](https://github.com/Mai0313/CodingAgent/tree/main?tab=License-1-ov-file)
+[![PRs](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Mai0313/CodingAgent/pulls)
+[![contributors](https://img.shields.io/github/contributors/Mai0313/CodingAgent.svg)](https://github.com/Mai0313/CodingAgent/graphs/contributors)
 
 </center>
 
 🚀 A production‑ready Python project template to help developers bootstrap new Python projects fast. It includes modern packaging, local tooling, Docker, and a complete CI/CD suite.
 
-Click [Use this template](https://github.com/Mai0313/coding_agent/generate) to start a new repository from this scaffold.
+Click [Use this template](https://github.com/Mai0313/CodingAgent/generate) to start a new repository from this scaffold.
 
 Other Languages: [English](README.md) | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
 
@@ -63,23 +63,8 @@ make test                     # run tests
 Run the example CLI:
 
 ```bash
-uv run coding_agent
+uv run coding-agent
 ```
-
-Use as a template (recommended for new projects):
-
-1. Click Use this template to create your repository
-2. Replace names everywhere:
-
-```bash
-# Replace package/module name
-find . -type f -name "*.py" -o -name "*.md" -o -name "*.toml" | xargs sed -i 's/coding_agent/your_package_name/g'
-
-# Replace display title
-find . -type f -name "*.py" -o -name "*.md" -o -name "*.toml" | xargs sed -i 's/CodingAgent/YourProjectTitle/g'
-```
-
-1. Update metadata in `pyproject.toml`
 
 ## 🧰 Commands Reference
 
@@ -176,15 +161,15 @@ CI builds also run automatically on tags matching `v*` and upload artifacts. Unc
 - Local (from this repo):
 
 ```bash
-uv run coding_agent
+uv run coding-agent
 uv run cli
 ```
 
 - From PyPI with `uvx` after publishing (ephemeral install):
 
 ```bash
-# If your console script is named "coding_agent"
-uvx coding_agent
+# If your console script is named "coding-agent"
+uvx coding-agent
 
 # Disambiguate or pin a package/version
 uvx --from your-package-name==0.1.0 your-entrypoint
@@ -197,7 +182,7 @@ Convenience tasks are defined under `[tool.poe.tasks]` in `pyproject.toml` and a
 ```bash
 uv run poe docs        # generate + serve docs (requires dev group)
 uv run poe gen         # generate + deploy docs (gh-deploy) (requires dev group)
-uv run poe main        # run CLI entry (same as uv run coding_agent)
+uv run poe main        # run CLI entry (same as uv run coding-agent)
 
 # or ephemeral via uvx (no local install)
 uvx poe docs
@@ -274,10 +259,10 @@ All workflows live in `.github/workflows/`. This section explains what each acti
 
 ## 🧩 Example CLI
 
-Console entry points are defined in `pyproject.toml` as `coding_agent` and `cli`. The example returns a simple `Response` model; replace with your own CLI logic.
+Console entry points are defined in `pyproject.toml` as `coding-agent` and `cli`. The example returns a simple `Response` model; replace with your own CLI logic.
 
 ```bash
-uv run coding_agent
+uv run coding-agent
 ```
 
 ## 🤝 Contributing

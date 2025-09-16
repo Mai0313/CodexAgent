@@ -60,7 +60,7 @@ omit = ["./src/ameba/*"]
 # ================== #
 
 [project]
-name = "coding_agent"
+name = "CodingAgent"
 version = "0.1.0"
 description = "Repository template for Python projects"
 authors = [
@@ -76,12 +76,12 @@ requires-python = ">= 3.10"
 license = { text = "MIT" }
 
 [project.urls]
-Homepage = "https://github.com/Mai0313/coding_agent"
-Repository = "https://github.com/Mai0313/coding_agent"
+Homepage = "https://github.com/Mai0313/CodingAgent"
+Repository = "https://github.com/Mai0313/CodingAgent"
 
 [project.scripts]
 cli = "coding_agent.cli:main"
-coding_agent = "coding_agent.cli:main"
+coding-agent = "coding_agent.cli:main"
 
 [dependency-groups]
 dev = [
@@ -456,7 +456,7 @@ skip-magic-trailing-comma = true
 [tool.logfire]
 send_to_logfire = false
 token = false
-project_name = "coding_agent"
+project_name = "CodingAgent"
 trace_sample_rate = 1.0
 console_colors = "auto"
 console_span_style = "show-parents"

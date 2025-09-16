@@ -51,12 +51,12 @@ jobs:
         run: |
           uv build
 
-      # - name: Publish Package
-      #   continue-on-error: true
-      #   env:
-      #     UV_PUBLISH_TOKEN: ${{ secrets.UV_PUBLISH_TOKEN }}
-      #   run: |
-      #     uv publish
+      - name: Publish Package
+        continue-on-error: true
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.UV_PUBLISH_TOKEN }}
+        run: |
+          uv publish
 
       - name: Upload Artifact
         if: ${{ contains(github.server_url, 'github') }}

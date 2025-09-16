@@ -1,3 +1,3 @@
 from importlib.metadata import version
 
-__version__ = version("coding_agent")
+__version__ = version("CodingAgent")

@@ -11,6 +11,6 @@ services:
       - run
       - --no-dev
       - --frozen
-      - coding_agent
+      - coding-agent
     restart: always
     pull_policy: always
