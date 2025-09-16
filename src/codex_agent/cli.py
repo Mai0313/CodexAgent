@@ -6,7 +6,6 @@ from rich.console import Console
 
 from codex_agent.types.gitea import GiteaWebhookPayload
 from codex_agent.types.github import GithubWebhookPayload
-from codex_agent.utils.verify import Verification
 from codex_agent.types.headers import GiteaWebhookHeaders, GitHubWebhookHeaders
 from codex_agent.utils.gen_jwt import JWTHandler
 from codex_agent.utils.settings import Settings
@@ -14,7 +13,6 @@ from codex_agent.utils.settings import Settings
 app = FastAPI()
 console = Console()
 settings = Settings()
-jwt_handler = JWTHandler(app_id=settings.app_id, key=settings.private_key)
 
 
 @app.get("/")
@@ -43,10 +41,8 @@ async def handle_gitea_webhook(request: Request) -> dict[str, str]:
 
 @app.post("/github/webhook")
 async def handle_github_webhook(request: Request) -> dict[str, str]:
-    headers = GitHubWebhookHeaders(**dict(request.headers))
+    GitHubWebhookHeaders(**dict(request.headers))
     body_dict = await request.body()
-
-    Verification.verify_github(headers.hub_signature_256, body_dict)
 
     payload = GithubWebhookPayload(**body_dict)
     if payload.action != "created" or not payload.comment or not payload.comment.body:
@@ -90,7 +86,7 @@ async def github_auth_callback(code: str, state: str) -> dict[str, str]:
 @app.get("/github/token/{installation_id}")
 async def get_installation_token(installation_id: int) -> dict[str, str]:
     """用 JWT 換 Installation Access Token"""
-    jwt_token = await jwt_handler.generate_jwt()
+    jwt_token = await JWTHandler.generate_jwt(app_id=settings.app_id, key=settings.private_key)
 
     async with httpx.AsyncClient() as client:
         resp = await client.post(

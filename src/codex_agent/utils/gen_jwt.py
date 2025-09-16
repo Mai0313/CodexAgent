@@ -5,14 +5,12 @@ from pydantic import BaseModel
 
 
 class JWTHandler(BaseModel):
-    app_id: str
-    key: str
-
-    async def generate_jwt(self) -> str:
+    @staticmethod
+    async def generate_jwt(app_id: str, key: str) -> str:
         """產生 GitHub App JWT"""
         now = datetime.datetime.now(datetime.timezone.utc)
         exp = now + datetime.timedelta(minutes=10)
         token = jwt.encode(
-            payload={"iat": now, "exp": exp, "iss": self.app_id}, key=self.key, algorithm="RS256"
+            payload={"iat": now, "exp": exp, "iss": app_id}, key=key, algorithm="RS256"
         )
         return token
