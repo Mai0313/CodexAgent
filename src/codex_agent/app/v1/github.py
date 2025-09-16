@@ -29,9 +29,7 @@ async def handle_github_webhook(request: Request) -> dict[str, str]:
         return {"status": "ignored"}
     if payload.comment and payload.comment.user:
         prompt = Path("./prompts/template.md").read_text()
-        prompt = prompt.replace("<user_id>", payload.comment.user.login)
-        prompt = prompt.replace("<task>", payload.comment.body)
-        prompt = prompt.replace("<clone_url>", payload.repository.clone_url)
+        prompt = prompt.format(task=payload.comment.body, clone_url=payload.repository.clone_url)
         console.print(prompt)
     return {"status": "received"}
 
