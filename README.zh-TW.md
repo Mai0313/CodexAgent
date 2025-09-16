@@ -63,7 +63,7 @@ make test
 執行範例 CLI：
 
 ```bash
-uv run coding-agent
+uv run codex_agent
 ```
 
 ## 🧰 指令一覽
@@ -161,15 +161,15 @@ CI 亦會在建立 `v*` 標籤時自動打包並上傳產物。若要自動發�
 - 本機（來源碼倉）：
 
 ```bash
-uv run coding-agent
+uv run codex_agent
 uv run cli
 ```
 
 - 發佈到 PyPI 後，透過 `uvx`（臨時安裝後執行）：
 
 ```bash
-# 若 console script 名稱為 "coding-agent"
-uvx coding-agent
+# 若 console script 名稱為 "codex_agent"
+uvx codex_agent
 
 # 或指定套件/版本與入口名稱
 uvx --from your-package-name==0.1.0 your-entrypoint
@@ -182,7 +182,7 @@ uvx --from your-package-name==0.1.0 your-entrypoint
 ```bash
 uv run poe docs        # 生成 + 啟動文件預覽（需 dev 群組）
 uv run poe gen         # 生成 + 發佈文件（gh-deploy）（需 dev 群組）
-uv run poe main        # 執行 CLI（等同 uv run coding-agent）
+uv run poe main        # 執行 CLI（等同 uv run codex_agent）
 
 # 或使用 uvx（臨時環境，無需本地安裝）
 uvx poe docs
@@ -252,10 +252,10 @@ uvx poe docs
 
 ## 🧩 範例 CLI
 
-`pyproject.toml` 內提供 `coding-agent` 與 `cli` 兩個入口點。目前示範回傳簡單 `Response` 模型，可依需求替換。
+`pyproject.toml` 內提供 `codex_agent` 與 `cli` 兩個入口點。目前示範回傳簡單 `Response` 模型，可依需求替換。
 
 ```bash
-uv run coding-agent
+uv run codex_agent
 ```
 
 ## 🤝 貢獻

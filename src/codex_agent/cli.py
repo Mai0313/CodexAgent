@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Request
 from rich.console import Console
 
-from coding_agent.types.gitea import GiteaWebhookPayload
-from coding_agent.types.headers import WebhookHeaders
+from codex_agent.types.gitea import GiteaWebhookPayload
+from codex_agent.types.headers import WebhookHeaders
 
 app = FastAPI()
 console = Console()

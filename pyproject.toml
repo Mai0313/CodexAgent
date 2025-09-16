@@ -80,8 +80,8 @@ Homepage = "https://github.com/Mai0313/CodexAgent"
 Repository = "https://github.com/Mai0313/CodexAgent"
 
 [project.scripts]
-cli = "coding_agent.cli:main"
-coding-agent = "coding_agent.cli:main"
+cli = "codex_agent.cli:main"
+codex_agent = "codex_agent.cli:main"
 
 [dependency-groups]
 dev = [
@@ -121,11 +121,11 @@ allow-direct-references = true
 
 [tool.hatch.build]
 include = [
-    "src/coding_agent"
+    "src/codex_agent"
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/coding_agent"]
+packages = ["src/codex_agent"]
 
 [tool.hatch.build.targets.sdist]
 # Basically everything except hidden files/directories (such as .github, .devcontainers, .python-version, etc)
@@ -163,8 +163,8 @@ exclude = [
 ]
 
 [tool.poe.tasks]
-api = "fastapi run ./src/coding_agent/cli.py --port=8116"
-main = "python ./src/coding_agent/cli.py"
+api = "fastapi run ./src/codex_agent/cli.py --port=8116"
+main = "python ./src/codex_agent/cli.py"
 
 # Documentation
 docs_gen = "make gen-docs"

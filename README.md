@@ -63,7 +63,7 @@ make test                     # run tests
 Run the example CLI:
 
 ```bash
-uv run coding-agent
+uv run codex_agent
 ```
 
 ## 🧰 Commands Reference
@@ -161,15 +161,15 @@ CI builds also run automatically on tags matching `v*` and upload artifacts. Unc
 - Local (from this repo):
 
 ```bash
-uv run coding-agent
+uv run codex_agent
 uv run cli
 ```
 
 - From PyPI with `uvx` after publishing (ephemeral install):
 
 ```bash
-# If your console script is named "coding-agent"
-uvx coding-agent
+# If your console script is named "codex_agent"
+uvx codex_agent
 
 # Disambiguate or pin a package/version
 uvx --from your-package-name==0.1.0 your-entrypoint
@@ -182,7 +182,7 @@ Convenience tasks are defined under `[tool.poe.tasks]` in `pyproject.toml` and a
 ```bash
 uv run poe docs        # generate + serve docs (requires dev group)
 uv run poe gen         # generate + deploy docs (gh-deploy) (requires dev group)
-uv run poe main        # run CLI entry (same as uv run coding-agent)
+uv run poe main        # run CLI entry (same as uv run codex_agent)
 
 # or ephemeral via uvx (no local install)
 uvx poe docs
@@ -259,10 +259,10 @@ All workflows live in `.github/workflows/`. This section explains what each acti
 
 ## 🧩 Example CLI
 
-Console entry points are defined in `pyproject.toml` as `coding-agent` and `cli`. The example returns a simple `Response` model; replace with your own CLI logic.
+Console entry points are defined in `pyproject.toml` as `codex_agent` and `cli`. The example returns a simple `Response` model; replace with your own CLI logic.
 
 ```bash
-uv run coding-agent
+uv run codex_agent
 ```
 
 ## 🤝 Contributing
