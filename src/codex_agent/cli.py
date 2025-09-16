@@ -42,9 +42,10 @@ async def handle_gitea_webhook(request: Request) -> dict[str, str]:
 @app.post("/github/webhook")
 async def handle_github_webhook(request: Request) -> dict[str, str]:
     GitHubWebhookHeaders(**dict(request.headers))
-    body_dict = await request.body()
+    body_dict = await request.json()
 
     payload = GithubWebhookPayload(**body_dict)
+    console.print(payload)
     if payload.action != "created" or not payload.comment or not payload.comment.body:
         return {"status": "ignored"}
     if f"@{settings.app_slug}" not in payload.comment.body.lower():
