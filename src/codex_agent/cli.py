@@ -7,6 +7,13 @@ from codex_agent.types.headers import WebhookHeaders
 app = FastAPI()
 console = Console()
 
+prompt_template = """
+You are an AI coding Assistant, your job is helping {user_id} to finish his job, here is the task:
+{task}
+Here is the repository URL: {clone_url}
+You can use MCP tools to help you complete the task.
+"""
+
 
 @app.post("/webhook")
 async def handle_webhook(request: Request) -> dict[str, str]:
@@ -19,5 +26,10 @@ async def handle_webhook(request: Request) -> dict[str, str]:
     payload.save("./logs/webhook_payload.json")
     if payload.action is None:
         return {"status": "no action"}
-    console.print(payload)
+    if payload.comment and "@agent" in payload.comment.body:
+        user_id = payload.comment.user.login
+        task = payload.comment.body
+        clone_url = payload.repository.clone_url
+        prompt = prompt_template.format(user_id=user_id, task=task, clone_url=clone_url)
+        console.print(prompt)
     return {"status": "received"}
