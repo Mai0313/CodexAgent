@@ -21,13 +21,12 @@ async def handle_github_webhook(request: Request) -> dict[str, str]:
     body_dict = await request.json()
 
     payload = GithubWebhookPayload(**body_dict)
-    payload.save("./logs/github_payload.json")
-    console.print(payload)
     if payload.action != "created" or not payload.comment or not payload.comment.body:
         return {"status": "ignored"}
     if f"@{settings.app_slug}" not in payload.comment.body.lower():
         return {"status": "ignored"}
-    if payload.comment and payload.comment.user:
+    if payload.action == "created" and payload.comment and payload.comment.user:
+        console.print(payload)
         prompt = Path("./prompts/template.md").read_text()
         prompt = prompt.format(task=payload.comment.body, clone_url=payload.repository.clone_url)
         console.print(prompt)

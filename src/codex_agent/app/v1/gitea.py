@@ -19,12 +19,12 @@ async def handle_gitea_webhook(request: Request) -> dict[str, str]:
     body_dict = await request.json()
 
     payload = GiteaWebhookPayload(**body_dict)
-    payload.save("./logs/gitea_payload.json")
     if payload.action is None:
         return {"status": "ignored"}
     if f"@{settings.app_slug}" not in payload.comment.body.lower():
         return {"status": "ignored"}
-    if payload.comment and payload.comment.user:
+    if payload.action == "created" and payload.comment and payload.comment.user:
+        console.print(payload)
         prompt = Path("./prompts/template.md").read_text()
         prompt = prompt.format(task=payload.comment.body, clone_url=payload.repository.clone_url)
     return {"status": "received"}
