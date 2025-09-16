@@ -18,11 +18,6 @@ class ClaudeCodeHandler(BaseModel):
     @cached_property
     def system_prompt(self) -> str:
         system_prompt = Path("./prompts/system_prompt.md").read_text()
-        return system_prompt
-
-    @computed_field
-    @cached_property
-    def system_info(self) -> str:
         system_info = Path("./prompts/system_info.md").read_text()
         system_info = system_info.format(
             os_version=platform.platform(),
@@ -30,7 +25,7 @@ class ClaudeCodeHandler(BaseModel):
             shell=os.environ.get("SHELL") or os.environ.get("COMSPEC"),
             workspace_path=os.getcwd(),
         )
-        return system_info
+        return f"{system_prompt}\n{system_info}"
 
     async def run(self, prompt: str) -> AsyncGenerator[str, None]:
         mcp_servers: dict[str, McpServerConfig] = {
