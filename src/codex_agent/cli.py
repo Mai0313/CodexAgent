@@ -54,3 +54,10 @@ async def handle_github_webhook(request: Request) -> dict[str, str]:
         prompt = prompt.replace("<clone_url>", payload.repository.clone_url)
         console.print(prompt)
     return {"status": "received"}
+
+
+@app.get("/auth")
+async def github_auth_callback(code: str, state: str) -> dict[str, str]:
+    console.print("✅ OAuth callback received!")
+    console.print(f"code={code}, state={state}")
+    return {"message": "OAuth callback received", "code": code, "state": state}
