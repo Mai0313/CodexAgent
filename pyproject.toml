@@ -60,7 +60,7 @@ omit = ["./src/ameba/*"]
 # ================== #
 
 [project]
-name = "gitea_bot"
+name = "coding_agent"
 version = "0.1.0"
 description = "Repository template for Python projects"
 authors = [
@@ -74,12 +74,12 @@ requires-python = ">= 3.10"
 license = { text = "MIT" }
 
 [project.urls]
-Homepage = "https://github.com/Mai0313/gitea_bot"
-Repository = "https://github.com/Mai0313/gitea_bot"
+Homepage = "https://github.com/Mai0313/coding_agent"
+Repository = "https://github.com/Mai0313/coding_agent"
 
 [project.scripts]
-cli = "gitea_bot.cli:main"
-gitea_bot = "gitea_bot.cli:main"
+cli = "coding_agent.cli:main"
+coding_agent = "coding_agent.cli:main"
 
 [dependency-groups]
 dev = [
@@ -119,11 +119,11 @@ allow-direct-references = true
 
 [tool.hatch.build]
 include = [
-    "src/gitea_bot"
+    "src/coding_agent"
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/gitea_bot"]
+packages = ["src/coding_agent"]
 
 [tool.hatch.build.targets.sdist]
 # Basically everything except hidden files/directories (such as .github, .devcontainers, .python-version, etc)
@@ -161,8 +161,8 @@ exclude = [
 ]
 
 [tool.poe.tasks]
-api = "python ./src/gitea_bot/cli.py"
-main = "python ./src/gitea_bot/cli.py"
+api = "python ./src/coding_agent/cli.py"
+main = "python ./src/coding_agent/cli.py"
 
 # Documentation
 docs_gen = "make gen-docs"
@@ -454,7 +454,7 @@ skip-magic-trailing-comma = true
 [tool.logfire]
 send_to_logfire = false
 token = false
-project_name = "gitea_bot"
+project_name = "coding_agent"
 trace_sample_rate = 1.0
 console_colors = "auto"
 console_span_style = "show-parents"

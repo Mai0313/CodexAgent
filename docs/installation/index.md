@@ -95,8 +95,8 @@ This page will guide you through the installation process this project.
 === "Conda"
 
     ```bash
-    conda create -n gitea_bot python=3.10 -y
-    conda activate gitea_bot
+    conda create -n coding_agent python=3.10 -y
+    conda activate coding_agent
     conda install uv
     uv pip sync pyproject.toml
     ```

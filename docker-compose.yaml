@@ -11,7 +11,7 @@ services:
       - run
       - --no-dev
       - --frozen
-      - gitea_bot
+      - coding_agent
     restart: always
     pull_policy: always
 

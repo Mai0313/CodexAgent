@@ -1,9 +1,9 @@
 site_name: RepoTemplate
-site_url: https://mai0313.github.io/gitea_bot/
+site_url: https://mai0313.github.io/coding_agent/
 site_author: Wei Lee
 
-repo_name: Mai0313/gitea_bot
-repo_url: https://github.com/Mai0313/gitea_bot
+repo_name: Mai0313/coding_agent
+repo_url: https://github.com/Mai0313/coding_agent
 edit_uri: edit/main/docs/
 
 docs_dir: docs
@@ -164,7 +164,7 @@ plugins:
 extra:
   social:
   - icon: fontawesome/brands/github-alt
-    link: https://github.com/Mai0313/gitea_bot
+    link: https://github.com/Mai0313/coding_agent
 
   alternate:
   - link: /
