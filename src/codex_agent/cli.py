@@ -26,6 +26,7 @@ async def handle_gitea_webhook(request: Request) -> dict[str, str]:
     body_dict = await request.json()
 
     payload = GiteaWebhookPayload(**body_dict)
+    payload.save("./logs/gitea_payload.json")
     if payload.action is None:
         return {"status": "ignored"}
     if f"@{settings.app_slug}" not in payload.comment.body.lower():
@@ -45,6 +46,7 @@ async def handle_github_webhook(request: Request) -> dict[str, str]:
     body_dict = await request.json()
 
     payload = GithubWebhookPayload(**body_dict)
+    payload.save("./logs/github_payload.json")
     console.print(payload)
     if payload.action != "created" or not payload.comment or not payload.comment.body:
         return {"status": "ignored"}
