@@ -25,7 +25,27 @@ class GithubAppSettings(BaseSettings):
         return private_key
 
 
-class Settings(GithubAppSettings): ...
+class GiteaAppSettings(BaseSettings):
+    """Settings for Gitea OAuth application."""
+
+    # Base URL of your Gitea instance, e.g. https://gitea.example.com
+    gitea_base_url: str = Field(
+        default="https://gitea.mediatek.inc", validation_alias=AliasChoices("GITEA_BASE_URL")
+    )
+    # OAuth client id/secret generated from Gitea -> Settings -> Applications
+    gitea_client_id: str | None = Field(
+        default=None, validation_alias=AliasChoices("GITEA_CLIENT_ID")
+    )
+    gitea_client_secret: str | None = Field(
+        default=None, validation_alias=AliasChoices("GITEA_CLIENT_SECRET")
+    )
+    # Optional: redirect URI you configured in Gitea app. If set, we'll include it in token exchange
+    gitea_redirect_uri: str | None = Field(
+        default=None, validation_alias=AliasChoices("GITEA_REDIRECT_URI")
+    )
+
+
+class Settings(GithubAppSettings, GiteaAppSettings): ...
 
 
 __all__ = ["Settings"]
