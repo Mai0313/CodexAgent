@@ -15,4 +15,4 @@
         - 這一個功能會透過 `Claude Code / OpenAI Codex` 去完成任務並發送PR到當前repo
         - 此功能可以支援繼續任務, 會讓使用者可以在PR發起後透過 comment 中標註 `@{settings.app_slug}` 繼續使用 `Claude Code / OpenAI Codex` 去修改當前 PR
     - 當 PR 發起時 在PR回應提及 `@{settings.app_slug} ...`, 則會將此任務當成一個協助接手完成 或 繼續任務, 這時候會透過 `Claude Code / OpenAI Codex` 切到當前 branch 繼續完成, 完成後 push 到當前同一個 branch 提供使用者檢查
-    - 當 PR message 中帶有 `@{settings.app_slug} generate commit message`, 則會查看所有改動 並編輯 PR 的原始內容
+    - 當 PR message 中帶有 `@{settings.app_slug} generate PR message`, 則會查看所有改動 並編輯 PR 的原始內容
