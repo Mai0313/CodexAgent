@@ -6,7 +6,7 @@
     - 這些功能的實際流程
         - 例如 使用者標記 -> App 收到指令 -> Git clone 到 `./workspace` -> 透過 `Claude Code / OpenAI Codex` 修改代碼 -> commit changes -> 發送 `PR`
 - 請查看實際代碼 如果未完成則計畫 已完成就照實際寫
-- 這些功能支援 `Github / Gitea`\*\*
+- 這些功能支援 `Github / Gitea`
 
 ## 以下是實際功能
 
