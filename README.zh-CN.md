@@ -1,6 +1,6 @@
 <center>
 
-# Python 项目模板
+# CodexAgent — GitHub/Gitea AI 程序协作 Agent
 
 [![PyPI version](https://img.shields.io/pypi/v/CodexAgent.svg)](https://pypi.org/project/CodexAgent/)
 [![python](https://img.shields.io/badge/-Python_%7C_3.10%7C_3.11%7C_3.12%7C_3.13-blue?logo=python&logoColor=white)](https://www.python.org/downloads/source/)
@@ -15,254 +15,171 @@
 
 </center>
 
-🚀 帮助 Python 开发者「快速建立新项目」的模板。内置现代化包管理、工具链、Docker 与完整 CI/CD 工作流程。
+用一句提及，就能让 AI 帮你在 GitHub/Gitea 上自动改码、提交、并建立 PR。CodexAgent 监听 Issues/PR 的留言中对 `@{GITHUB_APP_SLUG}` 的提及，将任务交给 Claude Code / OpenAI Codex 完成，并支持在 PR 讨论中持续迭代。
 
-点击 [使用此模板](https://github.com/Mai0313/CodexAgent/generate) 后即可开始。
+[English](README.md) | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
 
-其他语言: [English](README.md) | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
+## ✨ 核心特色（支持 GitHub / Gitea）
 
-## ✨ 重点特色
+- **提及触发**：在 Issue 或 PR 对话中 `@{GITHUB_APP_SLUG} <任务>` 即可触发
+- **自动化开发流程**：clone、建立/切换分支、AI 改码、测试、commit、建立/更新 PR
+- **PR 内续作**：在同一个 PR 中再次 `@{GITHUB_APP_SLUG}` 可要求持续修改，结果会 push 到同一分支
+- **生成 PR 内容**：在 PR 文字中输入 `@{GITHUB_APP_SLUG} generate commit message`，会分析改动并更新 PR 内容
+- **安全与审计**：以 GitHub App 权限与 Webhook Secret 验证事件；所有更动以分支/PR 形式可审核
 
-- 现代 `src/` 布局 + 全面类型注解
-- `uv` 超快依赖管理
-- pre-commit 包链：ruff、mdformat（含多插件）、codespell、nbstripout、mypy、uv hooks
-- 类型严谨：mypy + Pydantic 插件设置
-- pytest + coverage + xdist；PR 覆盖率摘要留言
-    - 覆盖率门槛 80%，HTML/XML 报告输出至 `.github/`
-- MkDocs Material + mkdocstrings（继承图）、markdown-exec、MathJax
-    - 开发服务器 `0.0.0.0:9987`；双语文档脚手架
-- 文档生成脚本：支持 class/文件两种模式、可选执行 notebook、可并发、保留目录结构
-    - 使用 anyio 异步处理与 rich 进度条
-- 打包：`uv build`、git-cliff 产 changelog
-- CI 自动版本：以 `dunamai` 从 git 产 PEP 440 版本
-- Dockerfile 多阶段（内含 uv/uvx 与 Node.js）；Compose 服务（Redis/Postgres/Mongo/MySQL）含 healthcheck 与 volume
-- GitHub Actions：测试、质量、文档部署、包打包、Docker 推送（GHCR + buildx cache）、Release Drafter、自动标签、秘密扫描、语义化 PR、pre-commit 自动更新
-    - pre-commit 同时挂载多个 git 阶段（pre-commit、post-checkout、post-merge、post-rewrite）
-    - i18n 友善检查（允许中文标点等 confusables）
-    - 文档列出可替代的环境管理（Rye、Conda）
-    - 兼容旧式流程：可用 `uv pip` 导出 `requirements.txt`
+> 注：以下描述的是完整功能设计。实现现况请见文末「目前进度与 Roadmap」。
 
-## 🚀 快速开始
+## 🧠 它如何运作
 
-需求：
+当用户在目标 repo 的 Issue 或 PR 留言中提到 `@{GITHUB_APP_SLUG}` 时，CodexAgent 会按以下流程执行：
 
-- Python 3.10–3.13
-- `uv`（可用 `make uv-install` 安装）
-- pre-commit hooks：`uv tool install pre-commit` 或 `uv sync --group dev`
+1. **接收事件**
+   - 通过 FastAPI Webhook 接收 GitHub/Gitea 的 `issue_comment` 事件
+   - 验证签名（GitHub `X-Hub-Signature-256` / Gitea Secret）与事件类型
 
-本机安装：
+2. **解析上下文**
+   - 获取仓库 URL、Issue/PR 信息、留言作者与内容
+   - 判断是「新任务」或「延续同一 PR 的任务」
+
+3. **准备工作区**
+   - 若为新任务：`git clone <repo>` 到 `./workspaces/<repo_name>`，建立分支 `codex-agent/<短uuid>`
+   - 若为续作：切换到 PR 对应的分支（`head`），更新到最新
+
+4. **AI 改码（Claude Code / OpenAI Codex）**
+   - 注入系统提示与任务模板（`./prompts/*.md`），提供完整工作目录
+   - 以工具模式执行（允许 shell/git/fs 操作），在工作区内完成开发工作
+   - 优先以最小必要修改达成目标，并尝试执行格式化/测试（如有）
+
+5. **提交与建立/更新 PR**
+   - 生成语义化的 commit message，推送到远程分支
+   - 新任务：对预设分支建立 PR，并在 PR 描述附上摘要与影响
+   - 续作：将新的 commit push 至同一分支，于 PR 留言回报进度
+
+6. **与用户迭代**
+   - 在 PR 讨论中再次 `@{GITHUB_APP_SLUG} <新的指令>` 可持续修改同一 PR
+   - 使用 `@{GITHUB_APP_SLUG} generate commit message` 可重写 PR 原始内容（描述/清单）
+
+## 💬 交互指南（留言语法）
+
+- **新任务（Issue 或 PR）**
+  - `@{GITHUB_APP_SLUG} 修复 tests/test_*.py 的失败案例`
+  - `@{GITHUB_APP_SLUG} 实现 README 中的安装章节与范例`
+
+- **续作（在现有 PR 中再次留言）**
+  - `@{GITHUB_APP_SLUG} 调整变更范围，只修改 abc/ 与 tests/`
+  - `@{GITHUB_APP_SLUG} 增加类型注释并修正 mypy 报告`
+
+- **生成 PR 内容**
+  - `@{GITHUB_APP_SLUG} generate commit message`
+  - 会根据文件差异生成条理化说明、影响范围、测试建议，并更新 PR 描述
+
+## 🔗 支持事件与平台
+
+- **GitHub**
+  - 事件：`issue_comment`（PR 对话也属此事件）
+  - 权限（最低建议）：Contents: Read/Write、Pull requests: Read/Write、Issues: Read、Metadata: Read
+  - Webhook：`POST https://<your-host>/github/webhook`
+
+- **Gitea**
+  - 事件：Issue/PR 留言（相当于 `issue_comment`）
+  - Webhook：`POST https://<your-host>/gitea/webhook`
+
+## ⚙️ 安装与部署
+
+本机开发（uv）：
 
 ```bash
 make uv-install
-uv sync                     # 安装基础依赖
-uv tool install pre-commit  # 或：uv sync --group dev
-make format
-make test
+uv sync
+uv run codex_agent   # 启动 FastAPI（uvicorn）在 0.0.0.0:8000
 ```
 
-执行示例 CLI：
+Docker（Compose）：
 
 ```bash
-uv run codex_agent
-```
-
-## 🧰 指令一览
-
-```bash
-# 开发
-make help               # 显示 Makefile 命令列表
-make clean              # 清理缓存、产物与产生的文档
-make format             # 执行所有 pre-commit hooks
-make test               # 执行 pytest
-make gen-docs           # 从 src/ 与 scripts/ 生成文档
-
-# Git 子模块（如有使用）
-make submodule-init     # 初始化与更新所有子模块
-make submodule-update   # 更新所有子模块至远端
-
-# 依赖管理（uv）
-make uv-install         # 安装 uv
-uv add <pkg>            # 加入正式依赖
-uv add <pkg> --dev      # 加入开发依赖
-# 同步选用依赖群组
-uv sync --group dev     # 安装开发用依赖（pre-commit、poe、notebook）
-uv sync --group test    # 安装测试用依赖
-uv sync --group docs    # 安装文档用依赖
-```
-
-## 📚 文档系统
-
-- 使用 MkDocs Material
-- 生成与预览：
-
-```bash
-uv sync --group docs
-make gen-docs
-uv run mkdocs serve    # http://localhost:9987
-```
-
-- 自动生成脚本：`scripts/gen_docs.py`（支持 .py 与 .ipynb）
-
-```bash
-# 以 class 为单位（默认）
-uv run python ./scripts/gen_docs.py --source ./src --output ./docs/Reference gen_docs
-
-# 以文件为单位
-uv run python ./scripts/gen_docs.py --source ./src --output ./docs/Reference --mode file gen_docs
-```
-
-## 🐳 Docker 与本机服务
-
-`docker-compose.yaml` 内提供本机开发常见服务：`redis`、`postgresql`、`mongodb`、`mysql`，以及演示 `app` 服务（执行 CLI）。
-
-建立 `.env` 设置连接参数（默认如下）：
-
-```bash
-REDIS_PORT=6379
-POSTGRES_DB=postgres
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_PORT=5432
-MONGO_PORT=27017
-MYSQL_ROOT_PASSWORD=root
-MYSQL_DATABASE=mysql
-MYSQL_USER=mysql
-MYSQL_PASSWORD=mysql
-MYSQL_PORT=3306
-```
-
-启动服务：
-
-```bash
-docker compose up -d redis postgresql mongodb mysql
-
-# 或启动演示 app
 docker compose up -d app
 ```
 
-## 📦 打包与发布
+设定公开可回调的 URL（如 ngrok/Cloudflare Tunnel），将 `https://<your-host>/github/webhook` 或 `.../gitea/webhook` 设为 Webhook 目标。
 
-以 uv 产出包（wheel/sdist 会放在 `dist/`）：
+## 🔑 环境变量
 
-```bash
-uv build
+将下列变量放入 `.env` 或部署平台的环境设定中：
+
+- `GITHUB_APP_SLUG`：你的 GitHub App slug（留言提及用）
+- `GITHUB_APP_WEBHOOK_SECRET`：Webhook Secret（GitHub 验签用）
+- `GITHUB_APP_ID`：GitHub App ID
+- `GITHUB_CLIENT_ID`、`GITHUB_CLIENT_SECRET`：OAuth 用（可支持安装/授权流程）
+- `GITHUB_PRIVATE_KEY_PATH`：GitHub App 私钥路径（PEM，默认 `./configs/app.pem`）
+- （选用）`CONTEXT7_API_KEY`：Claude Code MCP 插件示例所需的 API Key
+
+私钥请放在 `./configs/app.pem`，并确保不外泄。
+
+## 🧭 Webhook 与权限设置（GitHub）
+
+1. **创建 GitHub App**（建议安装到目标组织/个人）
+   - Webhook URL：`https://<your-host>/github/webhook`
+   - Webhook Secret：自定一组并填入环境变量
+   - 事件订阅：至少 `Issue comment`
+   - 权限：Contents(R/W)、Pull requests(R/W)、Issues(R)、Metadata(R)
+
+2. **下载私钥（PEM）**并放置于 `GITHUB_PRIVATE_KEY_PATH`
+
+3. **安装 App** 至目标 Repository 或 Organization
+
+4. **进阶（选用）**
+   - OAuth 回调：`GET /github/auth?code=<code>&state=<state>`（示范流程）
+   - 获取 Installation Token：`GET /github/token/{installation_id}`（示范用途）
+
+## 🧩 API 一览
+
+- `GET /`：健康检查（返回讦息）
+- `POST /github/webhook`：GitHub Webhook 入口
+- `POST /gitea/webhook`：Gitea Webhook 入口
+- `GET /github/auth`：GitHub OAuth 回调示范
+- `GET /github/token/{installation_id}`：交换 Installation Token 示范
+
+## 📁 项目结构（节选）
+
+```
+src/codex_agent/
+  app/api.py                 # FastAPI app 与路由挂载
+  app/v1/github.py           # GitHub Webhook + 授权/Token 范例
+  app/v1/gitea.py            # Gitea Webhook
+  utils/claude_code.py       # Claude Code 执行与 workspace 准备
+  utils/settings.py          # 读取 GitHub App 设定
+  utils/gen_jwt.py           # 生成 GitHub App JWT
+  types/                     # Webhook/Headers Pydantic 型别
+prompts/                     # 系统提示与任务模板
 ```
 
-发布到 PyPI（需设置 `UV_PUBLISH_TOKEN`）：
+工作目录默认：`./workspaces/<repo_name>`（第一次触发会自动 `git clone`）。
 
-```bash
-UV_PUBLISH_TOKEN=... uv publish
-```
+## 📌 目前进度与 Roadmap
 
-CI 亦会在建立 `v*` 标签时自动打包并上传产物。若要自动发布到 PyPI，请在 `build_package.yml` 取消注释 publish 步骤并设置 secret。
+**已完成（可用）：**
 
-### 在本机与 PyPI 执行你的 CLI
+- GitHub/Gitea Webhook 入口与事件解析（`issue_comment`）
+- 提及检测：`@{GITHUB_APP_SLUG}`
+- 工作区创建与 repo clone（`./workspaces/<repo>`）
+- Claude Code 执行框架（系统提示/模板注入、工具模式、工作目录）
+- GitHub OAuth/Installation Token 示例端点
 
-- 本机（源码仓）：
+**待完善（设计已定，将逐步补齐）：**
 
-```bash
-uv run codex_agent
-uv run cli
-```
-
-- 发布到 PyPI 后，通过 `uvx`（临时安装后执行）：
-
-```bash
-# 若 console script 名称为 "codex_agent"
-uvx codex_agent
-
-# 或指定包/版本与入口名称
-uvx --from your-package-name==0.1.0 your-entrypoint
-```
-
-## 🧭 选用任务管理（Poe the Poet）
-
-`pyproject.toml` 中的 `[tool.poe.tasks]` 定义了便捷任务，安装 dev 群组（`uv sync --group dev`）或使用 `uvx` 后可用：
-
-```bash
-uv run poe docs        # 生成 + 启动文档预览（需 dev 群组）
-uv run poe gen         # 生成 + 发布文档（gh-deploy）（需 dev 群组）
-uv run poe main        # 执行 CLI（等同 uv run codex_agent）
-
-# 或使用 uvx（临时环境，无需本地安装）
-uvx poe docs
-```
-
-## 🔁 CI/CD 工作流程总览
-
-所有流程位于 `.github/workflows/`，以下为触发时机与用途：
-
-- Tests（`test.yml`）
-
-    - 触发：对 `main`、`release/*` 的 PR
-    - 执行 pytest（3.10/3.11/3.12/3.13）并留下覆盖率摘要
-
-- Code Quality（`code-quality-check.yml`）
-
-    - 触发：PR
-    - 执行 ruff 与其它 pre-commit hooks
-
-- Docs Deploy（`deploy.yml`）
-
-    - 触发：推送到 `main` 与 `v*` 标签
-    - 构建并发布 MkDocs 网站到 GitHub Pages
-    - 需在 GitHub 启用 Pages（Actions → Pages）
-
-- Build Package（`build_package.yml`）
-
-    - 触发：`v*` 标签
-    - 以 `uv build` 打包并上传产物，并更新变更日志
-    - 发布到 PyPI：取消注释 `uv publish` 并新增 `UV_PUBLISH_TOKEN` secret
-
-- Publish Docker Image（`build_image.yml`）
-
-    - 触发：推送到 `main` 与 `v*` 标签
-    - 发布至 GHCR：`ghcr.io/<owner>/<repo>`（需 `docker/Dockerfile` 内有 `prod` target）
-
-- Build Executable（`build_executable.yml`）
-
-    - 触发：`v*` 标签（Windows runner）
-    - 示例流程（目前演示，请自行加入打包步骤）
-
-- Release Drafter（`release_drafter.yml`）
-
-    - 触发：推送到 `main` 与 PR 事件
-    - 基于 Conventional Commits 维护草稿发布
-
-- PR Labeler（`auto_labeler.yml`）
-
-    - 触发：PR 与 Push
-    - 依 `.github/labeler.yml` 自动加标签
-
-- Secret Scanning（`secret_scan.yml`）
-
-    - 触发：Push 与 PR
-    - 使用 gitleaks 扫描机密
-
-- Semantic Pull Request（`semantic-pull-request.yml`）
-
-    - 触发：PR 开启/更新
-    - 强制 PR 标题符合 Conventional Commits
-
-### CI/CD 设置清单
-
-- PR 标题遵循 Conventional Commits
-- （选用）发布到 PyPI：新增 `UV_PUBLISH_TOKEN` secret
-- （选用）启用 GitHub Pages 以发布文档
-
-## 🧩 示例 CLI
-
-`pyproject.toml` 内提供 `codex_agent` 与 `cli` 两个入口点。目前演示返回简单 `Response` 模型，可依需求替换。
-
-```bash
-uv run codex_agent
-```
+- GitHub/Gitea 签名验证与错误处理强化
+- 自动创建/更新 PR、分支命名策略与保护规则整合
+- PR 内「续作」全流程（checkout、冲突处理、状态回复）
+- commit message/PR 描述自动生成与覆写
+- 内建测试/格式化自动执行与回报
+- 多模型供应商选择（Claude Code / OpenAI Codex 等）与密钥管理
+- 更完整的权限/审计日志
 
 ## 🤝 贡献
 
-- 欢迎 Issue/PR
-- 请遵循程序风格（ruff、类型）
-- PR 标题遵循 Conventional Commits
+- 欢迎提交 Issue/PR
+- 请遵循编程风格（ruff、类型）与语义化提交
+- 建议 PR 标题采用 Conventional Commits
 
 ## 📄 授权
 

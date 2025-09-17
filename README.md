@@ -1,6 +1,6 @@
 <center>
 
-# Python Project Template
+# CodexAgent — GitHub/Gitea AI Code Collaboration Agent
 
 [![PyPI version](https://img.shields.io/pypi/v/CodexAgent.svg)](https://pypi.org/project/CodexAgent/)
 [![python](https://img.shields.io/badge/-Python_%7C_3.10%7C_3.11%7C_3.12%7C_3.13-blue?logo=python&logoColor=white)](https://www.python.org/downloads/source/)
@@ -15,261 +15,171 @@
 
 </center>
 
-🚀 A production‑ready Python project template to help developers bootstrap new Python projects fast. It includes modern packaging, local tooling, Docker, and a complete CI/CD suite.
+Just mention it once, and AI will automatically modify code, commit, and create PRs on GitHub/Gitea. CodexAgent listens for `@{GITHUB_APP_SLUG}` mentions in Issues/PR comments, delegates tasks to Claude Code / OpenAI Codex, and supports continuous iteration in PR discussions.
 
-Click [Use this template](https://github.com/Mai0313/CodexAgent/generate) to start a new repository from this scaffold.
+[English](README.md) | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
 
-Other Languages: [English](README.md) | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
+## ✨ Core Features (GitHub / Gitea Support)
 
-## ✨ Highlights
+- **Mention Trigger**: Simply `@{GITHUB_APP_SLUG} <task>` in Issue or PR comments to trigger
+- **Automated Development Workflow**: clone, create/switch branch, AI code modification, testing, commit, create/update PR
+- **Continuous PR Work**: Mention `@{GITHUB_APP_SLUG}` again in the same PR for continuous modifications, results pushed to the same branch
+- **Generate PR Content**: Use `@{GITHUB_APP_SLUG} generate commit message` in PR text to analyze changes and update PR content
+- **Security & Audit**: Validated with GitHub App permissions and Webhook Secret verification; all changes reviewable via branch/PR format
 
-- Modern `src/` layout and type‑hinted code
-- Fast dependency management via `uv`
-- Pre‑commit suite: ruff, mdformat(+plugins), codespell, nbstripout, mypy, uv hooks
-- Strong typing: mypy with Pydantic plugin configuration
-- Pytest with coverage and xdist; PR coverage summary comment
-- Coverage gate at 80% with HTML/XML reports committed under `.github/`
-- MkDocs Material with mkdocstrings (inheritance diagrams), markdown‑exec, MathJax
-- Dev server at `0.0.0.0:9987`; bilingual docs scaffolded
-- Docs generator script: by class/file, optional notebook execution, concurrency, preserves folder structure
-- Async file processing via anyio and rich progress bars
-- Packaging with `uv build` and changelog via `git-cliff`
-- Automatic PEP 440 versioning from git via `dunamai` in CI
-- Dockerfile multi‑stage with uv/uvx and Node.js; Compose services (Redis/Postgres/Mongo/MySQL) with healthchecks and volumes
-- GitHub Actions: tests, quality, docs deploy, package build, docker image publish (GHCR with buildx cache), release drafter, auto labeler, secret scan, semantic PR, pre‑commit auto‑update
-- Pre‑commit runs on multiple git stages (pre‑commit, post‑checkout, post‑merge, post‑rewrite)
-- i18n‑friendly linting (Chinese punctuation allowed confusables)
-- Alternative env managers documented (Rye, Conda)
-- Legacy compatibility: export `requirements.txt` via `uv pip` if needed
+> Note: The following describes the complete feature design. For current implementation status, see "Current Progress & Roadmap" at the end.
 
-## 🚀 Quick Start
+## 🧠 How It Works
 
-Prerequisites:
+When users mention `@{GITHUB_APP_SLUG}` in Issue or PR comments in target repos, CodexAgent executes the following workflow:
 
-- Python 3.10–3.13
-- `uv` (install with `make uv-install`)
-- Pre-commit hooks: either `uv tool install pre-commit` or `uv sync --group dev`
+1. **Event Reception**
+   - Receive GitHub/Gitea `issue_comment` events via FastAPI Webhook
+   - Verify signatures (GitHub `X-Hub-Signature-256` / Gitea Secret) and event types
 
-Local setup:
+2. **Context Parsing** 
+   - Extract repository URL, Issue/PR info, comment author and content
+   - Determine if it's a "new task" or "continuation of existing PR task"
+
+3. **Workspace Preparation**
+   - For new tasks: `git clone <repo>` to `./workspaces/<repo_name>`, create branch `codex-agent/<short-uuid>`
+   - For continuations: switch to PR's corresponding branch (`head`), update to latest
+
+4. **AI Code Modification (Claude Code / OpenAI Codex)**
+   - Inject system prompts and task templates (`./prompts/*.md`), provide complete working directory
+   - Execute in tool mode (allows shell/git/fs operations), complete development work in workspace
+   - Prioritize minimal necessary changes to achieve goals, attempt formatting/testing (if available)
+
+5. **Commit & Create/Update PR**
+   - Generate semantic commit messages, push to remote branch
+   - New tasks: create PR against default branch, attach summary and impact in PR description
+   - Continuations: push new commits to same branch, report progress in PR comments
+
+6. **User Iteration**
+   - Mention `@{GITHUB_APP_SLUG} <new command>` again in PR discussions for continuous modification of same PR
+   - Use `@{GITHUB_APP_SLUG} generate commit message` to rewrite PR original content (description/checklist)
+
+## 💬 Interaction Guide (Comment Syntax)
+
+- **New Tasks (Issue or PR)**
+  - `@{GITHUB_APP_SLUG} Fix failing test cases in tests/test_*.py`
+  - `@{GITHUB_APP_SLUG} Implement installation section and examples in README`
+
+- **Continuations (Comment again in existing PR)**
+  - `@{GITHUB_APP_SLUG} Adjust change scope, only modify abc/ and tests/`
+  - `@{GITHUB_APP_SLUG} Add type annotations and fix mypy reports`
+
+- **Generate PR Content**
+  - `@{GITHUB_APP_SLUG} generate commit message`
+  - Will generate organized descriptions, impact scope, testing suggestions based on file differences, and update PR description
+
+## 🔗 Supported Events & Platforms
+
+- **GitHub**
+  - Events: `issue_comment` (PR conversations also belong to this event)
+  - Permissions (minimum recommended): Contents: Read/Write, Pull requests: Read/Write, Issues: Read, Metadata: Read
+  - Webhook: `POST https://<your-host>/github/webhook`
+
+- **Gitea**
+  - Events: Issue/PR comments (equivalent to `issue_comment`)
+  - Webhook: `POST https://<your-host>/gitea/webhook`
+
+## ⚙️ Installation & Deployment
+
+Local development (uv):
 
 ```bash
-make uv-install               # once
-uv sync                       # install base deps
-uv tool install pre-commit    # or: uv sync --group dev
-make format                   # run pre-commit hooks
-make test                     # run tests
+make uv-install
+uv sync
+uv run codex_agent   # Start FastAPI (uvicorn) on 0.0.0.0:8000
 ```
 
-Run the example CLI:
+Docker (Compose):
 
 ```bash
-uv run codex_agent
-```
-
-## 🧰 Commands Reference
-
-```bash
-# Development
-make help               # List available make targets
-make clean              # Clean caches, artifacts and generated docs
-make format             # Run all pre-commit hooks
-make test               # Run pytest across the repository
-make gen-docs           # Generate docs from src/ and scripts/
-
-# Git submodules (if you use them)
-make submodule-init     # Init and update all submodules
-make submodule-update   # Update all submodules to remote
-
-# Dependencies (via uv)
-make uv-install         # Install uv on your system
-uv add <pkg>            # Add production dependency
-uv add <pkg> --dev      # Add development dependency
-# Sync optional groups
-uv sync --group dev     # Install dev-only deps (pre-commit, poe, notebook)
-uv sync --group test    # Install test-only deps
-uv sync --group docs    # Install docs-only deps
-```
-
-## 📚 Documentation
-
-- Live docs are built with MkDocs Material.
-- Generate API docs locally and serve:
-
-```bash
-uv sync --group docs
-make gen-docs
-uv run mkdocs serve    # http://localhost:9987
-```
-
-- Auto generation script: `scripts/gen_docs.py` (supports .py and .ipynb)
-
-```bash
-# Generate docs by class (default)
-uv run python ./scripts/gen_docs.py --source ./src --output ./docs/Reference gen_docs
-
-# Generate docs by file
-uv run python ./scripts/gen_docs.py --source ./src --output ./docs/Reference --mode file gen_docs
-```
-
-## 🐳 Docker and Local Services
-
-`docker-compose.yaml` includes optional services for local development: `redis`, `postgresql`, `mongodb`, `mysql`, and an example `app` service that runs the CLI.
-
-Create a `.env` file to configure ports and credentials (defaults shown):
-
-```bash
-REDIS_PORT=6379
-POSTGRES_DB=postgres
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_PORT=5432
-MONGO_PORT=27017
-MYSQL_ROOT_PASSWORD=root
-MYSQL_DATABASE=mysql
-MYSQL_USER=mysql
-MYSQL_PASSWORD=mysql
-MYSQL_PORT=3306
-```
-
-Run services:
-
-```bash
-docker compose up -d redis postgresql mongodb mysql
-
-# Or run the example app container
 docker compose up -d app
 ```
 
-## 📦 Packaging and Distribution
+Set up publicly accessible callback URL (like ngrok/Cloudflare Tunnel), configure `https://<your-host>/github/webhook` or `.../gitea/webhook` as Webhook target.
 
-Build artifacts with uv (wheel and sdist go to `dist/`):
+## 🔑 Environment Variables
 
-```bash
-uv build
+Place the following variables in `.env` or your deployment platform's environment configuration:
+
+- `GITHUB_APP_SLUG`: Your GitHub App slug (for comment mentions)
+- `GITHUB_APP_WEBHOOK_SECRET`: Webhook Secret (for GitHub signature verification)
+- `GITHUB_APP_ID`: GitHub App ID
+- `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`: OAuth use (can support installation/authorization flow)
+- `GITHUB_PRIVATE_KEY_PATH`: GitHub App private key path (PEM, default `./configs/app.pem`)
+- (Optional) `CONTEXT7_API_KEY`: API Key required for Claude Code MCP plugin example
+
+Place private key at `./configs/app.pem` and ensure it's not exposed.
+
+## 🧭 Webhook & Permission Setup (GitHub)
+
+1. **Create GitHub App** (recommended to install to target organization/personal)
+   - Webhook URL: `https://<your-host>/github/webhook`
+   - Webhook Secret: Custom set and fill into environment variables
+   - Event subscriptions: At least `Issue comment`
+   - Permissions: Contents(R/W), Pull requests(R/W), Issues(R), Metadata(R)
+
+2. **Download private key (PEM)** and place at `GITHUB_PRIVATE_KEY_PATH`
+
+3. **Install App** to target Repository or Organization
+
+4. **Advanced (Optional)**
+   - OAuth callback: `GET /github/auth?code=<code>&state=<state>` (demo flow)
+   - Get Installation Token: `GET /github/token/{installation_id}` (demo purposes)
+
+## 🧩 API Overview
+
+- `GET /`: Health check (returns message)
+- `POST /github/webhook`: GitHub Webhook entry point
+- `POST /gitea/webhook`: Gitea Webhook entry point
+- `GET /github/auth`: GitHub OAuth callback demo
+- `GET /github/token/{installation_id}`: Exchange Installation Token demo
+
+## 📁 Project Structure (Selected)
+
+```
+src/codex_agent/
+  app/api.py                 # FastAPI app and route mounting
+  app/v1/github.py           # GitHub Webhook + auth/Token examples
+  app/v1/gitea.py            # Gitea Webhook
+  utils/claude_code.py       # Claude Code execution and workspace preparation
+  utils/settings.py          # Read GitHub App settings
+  utils/gen_jwt.py           # Generate GitHub App JWT
+  types/                     # Webhook/Headers Pydantic types
+prompts/                     # System prompts and task templates
 ```
 
-Publish to PyPI (requires `UV_PUBLISH_TOKEN`):
+Working directory default: `./workspaces/<repo_name>` (first trigger will automatically `git clone`).
 
-```bash
-UV_PUBLISH_TOKEN=... uv publish
-```
+## 📌 Current Progress & Roadmap
 
-CI builds also run automatically on tags matching `v*` and upload artifacts. Uncomment the publish step in `build_package.yml` to automate releases to PyPI.
+**Completed (Available):**
 
-### Run your CLI locally and from PyPI
+- GitHub/Gitea Webhook entry points and event parsing (`issue_comment`)
+- Mention detection: `@{GITHUB_APP_SLUG}`
+- Workspace creation and repo clone (`./workspaces/<repo>`)
+- Claude Code execution framework (system prompt/template injection, tool mode, working directory)
+- GitHub OAuth/Installation Token example endpoints
 
-- Local (from this repo):
+**To be Enhanced (Design finalized, will be gradually completed):**
 
-```bash
-uv run codex_agent
-uv run cli
-```
-
-- From PyPI with `uvx` after publishing (ephemeral install):
-
-```bash
-# If your console script is named "codex_agent"
-uvx codex_agent
-
-# Disambiguate or pin a package/version
-uvx --from your-package-name==0.1.0 your-entrypoint
-```
-
-## 🧭 Optional task runner (Poe the Poet)
-
-Convenience tasks are defined under `[tool.poe.tasks]` in `pyproject.toml` and available after installing the dev group (`uv sync --group dev`) or via `uvx`:
-
-```bash
-uv run poe docs        # generate + serve docs (requires dev group)
-uv run poe gen         # generate + deploy docs (gh-deploy) (requires dev group)
-uv run poe main        # run CLI entry (same as uv run codex_agent)
-
-# or ephemeral via uvx (no local install)
-uvx poe docs
-```
-
-## 🔁 CI/CD Actions Overview
-
-All workflows live in `.github/workflows/`. This section explains what each action does, when it runs, and what to configure.
-
-- Tests (`test.yml`)
-
-    - Trigger: Pull requests to `main` or `release/*` (ignores md files)
-    - Runs pytest on Python 3.10/3.11/3.12/3.13 with coverage and comments a summary
-    - Setup needed: none
-
-- Code Quality Check (`code-quality-check.yml`)
-
-    - Trigger: Pull requests
-    - Runs ruff and other pre-commit hooks
-    - Setup needed: none
-
-- Docs Deploy (`deploy.yml`)
-
-    - Trigger: Push to `main` and tags `v*`
-    - Builds `mkdocs` site and publishes to GitHub Pages
-    - Setup needed:
-        - Enable GitHub Pages for the repo (Actions → Pages)
-        - The workflow configures and uploads the site automatically
-
-- Build Package (`build_package.yml`)
-
-    - Trigger: Tags `v*`
-    - Builds wheel/sdist via `uv build` and uploads artifacts; updates changelog
-    - Optional publish: uncomment the `uv publish` step and add secret `UV_PUBLISH_TOKEN`
-
-- Publish Docker Image (`build_image.yml`)
-
-    - Trigger: Push to `main` and tags `v*`
-    - Builds and pushes a Docker image to GHCR: `ghcr.io/<owner>/<repo>`
-    - Setup needed: none (uses `GITHUB_TOKEN`); ensure `docker/Dockerfile` defines `prod` target
-
-- Build Executable (`build_executable.yml`)
-
-    - Trigger: Tags `v*` (Windows runner)
-    - Currently stubs out packaging (example commented). Uploads a zip artifact
-    - To ship a real executable, add your PyInstaller (or similar) steps
-
-- Release Drafter (`release_drafter.yml`)
-
-    - Trigger: Push to `main` and PR events
-    - Maintains a draft release based on Conventional Commits
-
-- Pull Request Labeler (`auto_labeler.yml`)
-
-    - Trigger: PRs and pushes
-    - Auto-applies labels defined in `.github/labeler.yml`
-
-- Secret Scanning (`secret_scan.yml`)
-
-    - Trigger: Push and PR
-    - Runs gitleaks to detect leaked secrets
-
-- Semantic Pull Request (`semantic-pull-request.yml`)
-
-    - Trigger: PR open/edit/sync
-    - Enforces Conventional Commit style PR titles
-
-### CI/CD Configuration Checklist
-
-- Conventional commits for PR titles (enforced by the workflow)
-- Optional: set `UV_PUBLISH_TOKEN` secret to publish to PyPI
-- Optional: enable GitHub Pages (used by docs deploy)
-- Container Registry permissions are handled automatically via `GITHUB_TOKEN`
-
-## 🧩 Example CLI
-
-Console entry points are defined in `pyproject.toml` as `codex_agent` and `cli`. The example returns a simple `Response` model; replace with your own CLI logic.
-
-```bash
-uv run codex_agent
-```
+- GitHub/Gitea signature verification and enhanced error handling
+- Automatic PR creation/update, branch naming strategy and protection rule integration
+- Complete "continuation" workflow in PR (checkout, conflict handling, status replies)
+- Automatic commit message/PR description generation and overwriting
+- Built-in testing/formatting auto-execution and reporting
+- Multi-model provider selection (Claude Code / OpenAI Codex etc.) and key management
+- More comprehensive permission/audit logging
 
 ## 🤝 Contributing
 
-- Open issues/PRs
-- Follow the coding style (ruff, type hints)
-- Use Conventional Commit messages and descriptive PR titles
+- Welcome to submit Issue/PR
+- Please follow coding style (ruff, types) and semantic commits
+- Recommended PR titles adopt Conventional Commits
 
 ## 📄 License
 
