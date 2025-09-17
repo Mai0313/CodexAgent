@@ -26,7 +26,7 @@ CodexAgent is built with:
 - **Route**: `POST /gitea/webhook`
 - **Event**: Issue/PR comments (equivalent to GitHub's `issue_comment`)
 - **Validation**: Uses `GiteaWebhookHeaders` and `GiteaWebhookPayload` Pydantic models
-- **Similar processing logic to GitHub handler
+- **Similar processing logic to GitHub handler**
 
 ### 2. Claude Code Integration (`src/codex_agent/utils/claude_code.py`)
 
