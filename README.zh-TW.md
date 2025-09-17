@@ -17,7 +17,7 @@
 
 用一句提及，就能讓 AI 幫你在 GitHub/Gitea 上自動改碼、提交、並建立 PR。CodexAgent 監聽 Issues/PR 的留言中對 `@{GITHUB_APP_SLUG}` 的提及，將任務交給 Claude Code / OpenAI Codex 完成，並支援在 PR 討論中持續迭代。
 
-其他語言: [English](README.md) | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
+[English](README.md) | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
 
 ## ✨ 核心特色（支援 GitHub / Gitea）
 
